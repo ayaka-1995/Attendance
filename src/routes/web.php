@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AttendanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +27,8 @@ Route::post('/register',[UserController::class, 'storeUser']);
 Route::get('/register',[UserController::class,'showRegisterForm']);
 
 
-//Route::get('/attendance', [AuthController::class, 'index']);
+//Route::get('/attendance', [AttendanceController::class, 'index']);
 Route::middleware(['auth','verified'])->group(function(){
-    Route::get('/attendance',[AuthController::class,'index']);
+    Route::get('/attendance',[AttendanceController::class,'index']);
+    Route::post('/attendance',[AttendanceController::class,'store']);
 });
