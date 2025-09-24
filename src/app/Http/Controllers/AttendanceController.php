@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Attendance;
+use App\Models\BreakModel;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -19,12 +20,78 @@ class AttendanceController extends Controller
         $user = Auth::user();
         $now = Carbon::now();
 
-        Attendance::create([
-            'user_id' => $user->id,
-            'work_date' => $now->toDateString(),
-            'clock_in_time' => $now->toTimeString(),
+    if($request->has('clock_in')) {
+            Attendance::create([
+                'user_id' => $user->id,
+                'work_date' => $now->toDateString(),
+                'clock_in_time' => $now->toTimeString(),
         ]);
+    }
+
+    if($request->has('break_start')){
+        $attendance = Attendance::where('user_id', $user->id)
+            ->where('work_date', $now->toDateString())
+            ->first();
+
+            if($attendance){
+                BreakModel::create([
+                    'attendance_id' => $attendance->id,
+                    'break_start_time' => $now->toTimeString(),
+                ]);
+            }
+    }
+    
+    if($request->has('break_end')) {
+        $attendance = Attendance::where('user_id' , $user->id)
+            ->where('work_date', $now->toDateString())
+            ->first();
+
+            if($attendance){
+                $lastBreak = BreakModel::where('attendance_id', $attendance->id)
+                    ->whereNull('break_end_time')
+                    ->latest()
+                    ->first();
+
+                    if($lastBreak){
+                        $lastBreak->update([
+                            'break_end_time' => $now->toTimeString(),
+                        ]);
+                    }
+            }
+    }
+
+    if($request->has('clock_out')){
+        $attendance = Attendance::where('user_id', $user->id)
+            ->where('work_date', $now->toDateString())
+            ->first();
+
+            if($attendance && is_null($attendance->clock_out_time)){
+                $attendance->update([
+                    'clock_out_time' => $now->toTimeString(),
+                ]);
+            }
+    }
+
+
 
         return redirect('/attendance');
+    }
+
+    public function list(Request $request)
+    {
+        $user = Auth::user();
+
+        $month = $request->query('month', Carbon::now()->format('Y-m'));
+
+        $startOfMonth = Carbon::parse($month)->startOfMonth();
+        $endOfMonth = Carbon::parse($month)->endOfMonth();
+
+        $attendances = Attendance::where('user_id', $user->id)
+            ->whereBetween('work_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->orderBy('work_date','asc')
+            ->with('breaks')
+            ->get();
+
+            return view('attendance.list', compact('attendances', 'month'));
     }
 }

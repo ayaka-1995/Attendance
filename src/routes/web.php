@@ -31,4 +31,5 @@ Route::get('/register',[UserController::class,'showRegisterForm']);
 Route::middleware(['auth','verified'])->group(function(){
     Route::get('/attendance',[AttendanceController::class,'index']);
     Route::post('/attendance',[AttendanceController::class,'store']);
+    Route::get('/attendance/list', [AttendanceController::class,'list'])->name('attendance.list');
 });

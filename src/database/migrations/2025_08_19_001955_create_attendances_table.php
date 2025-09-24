@@ -19,8 +19,6 @@ class CreateAttendancesTable extends Migration
             $table->date('work_date');
             $table->time('clock_in_time')->nullable();
             $table->time('clock_out_time')->nullable();
-            $table->time('break_time')->nullable();
-            $table->time('break_time2')->nullable();
             $table->string('comment_section',255)->nullable();
             $table->timestamps();
         });

@@ -21,7 +21,21 @@
     <div class="attendance__button">
         <form action="/attendance" method="POST">
             @csrf
-            <button type="submit" class="attendance__button-submit">出勤</button>
+            <button type="submit" name="clock_in" class="attendance__button-submit">出勤</button>
+        </form>
+
+        <form action="/attendance" method="POST">
+            @csrf
+            <button type="submit" name="break_start" class="attendance__button-button">休憩入</button>
+        </form>
+
+        <form action="/attendance" method="POST">
+            @csrf
+            <button type="submit" name="break_end" class="attendance__button-button">休憩戻</button>
+        </form>
+        <form action="/attendance" method="POST">
+            @csrf
+            <button type="submit" name="clock_out" class="attendance__button-submit">退勤</button>
         </form>
     </div>
 </div>

@@ -14,8 +14,13 @@ class Attendance extends Model
         'work_date',
         'clock_in_time',
         'clock_out_time',
-        'break_time',
-        'break_time2',
+        'break_start_time',
+        'break_end_time',
         'comment_section',
     ];
+
+    public function breaks()
+    {
+        return $this->hasMany(BreakModel::class);
+    }
 }

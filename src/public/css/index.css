@@ -1,3 +1,7 @@
+body {
+    background-color: #f0eff2;
+}
+
 .attendance-form__content {
     display: flex;
     flex-direction: column;
@@ -6,6 +10,7 @@
     min-height: calc(50vh - 60px);
     font-family: inter;
     color: #333;
+    background-color: #f0eff2;
     margin-top: 150px;
 }
 
@@ -33,6 +38,19 @@
 .attendance__button-submit {
     background-color: #000;
     color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+    padding: 14px 60px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 100px;
+}
+
+.attendance__button-button {
+    background-color: #fff;
+    color: #000;
     font-size: 32px;
     font-weight: 700;
     padding: 14px 60px;

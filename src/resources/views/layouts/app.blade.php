@@ -22,18 +22,18 @@
           <ul class="header-nav">
             @if (Auth::check())
             <li class="header-nav__item">
-              <a class="header-nav__link" href="/">勤怠</a>
+              <a class="header-nav__link" href="/attendance">勤怠</a>
             </li>
             <li class="header-nav__item">
-                <a class="header-nav__link" href="/">勤怠一覧</a>
+                <a class="header-nav__link" href="/attendance/list">勤怠一覧</a>
             </li>
             <li class="header-nav__item">
                 <a class="header-nav__link" href="/">申請</a>
             </li>
             <li class="header-nav__item">
-              <form class="form" action="/logout" method="post">
+              <form action="/logout" class="header__form" method="post">
                 @csrf
-                <button class="header-nav__button">ログアウト</button>
+                <button class="header-nav__button--logout" type="submit">ログアウト</button>
               </form>
             </li>
             @endif
