@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\ApplicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,4 +33,6 @@ Route::middleware(['auth','verified'])->group(function(){
     Route::get('/attendance',[AttendanceController::class,'index']);
     Route::post('/attendance',[AttendanceController::class,'store']);
     Route::get('/attendance/list', [AttendanceController::class,'list'])->name('attendance.list');
+
+    Route::get('/stamp_correction_request/list',[ApplicationController::class,'index'])->name('applications.index');
 });
