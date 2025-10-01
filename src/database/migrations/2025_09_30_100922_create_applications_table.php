@@ -17,7 +17,7 @@ class CreateApplicationsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('status')->default('pending');
-            $table->date('applied_date');
+            $table->date('target_date');
             $table->text('reason')->nullable();
             $table->date('approved_date')->nullable();
             $table->timestamps();

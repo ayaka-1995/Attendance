@@ -10,7 +10,7 @@ class Application extends Model
     protected $fillable = [
         'user_id',
         'status',
-        'applied_date',
+        'target_date',
         'reason',
         'approved_date',
     ];
