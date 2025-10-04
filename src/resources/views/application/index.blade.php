@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{asset ('css/list.css')}}">
+<link rel="stylesheet" href="{{asset ('css/application.css')}}">
 @endsection
 
 @section('content')
@@ -21,7 +21,7 @@
                 <th class="application_status">状態</th>
                 <th class="application_name">名前</th>
                 <th class="target_date">対象日時</th>
-                <th class="application_reason">遅延理由</th>
+                <th class="application_reason">申請理由</th>
                 <th class="application_date">詳細</th>
             </tr>
 
