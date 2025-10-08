@@ -42,4 +42,9 @@ class Attendance extends Model
 
         return sprintf('%02d:%02d', $hours, $minute);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

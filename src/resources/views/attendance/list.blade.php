@@ -46,7 +46,8 @@
                     <td class="attendance_clock_in_time">{{ $attendance->clock_in_time}}</td>
                     <td class="attendance_clock_out_time">{{ $attendance->clock_out_time}}</td>
                     <td class="attendance_break_time">{{ $attendance->total_break_time}}</td>
-                    
+                    <td class="attendance_work_total"></td>
+                    <td class="attendance_detail"><a href="{{ route('attendance.detail',['id' => $attendance->id]) }}" class="detail_link">詳細</a></td>
                 </tr>
             @endforeach
         </table>

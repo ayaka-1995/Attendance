@@ -94,4 +94,11 @@ class AttendanceController extends Controller
 
             return view('attendance.list', compact('attendances', 'month'));
     }
+
+    public function detail($id)
+    {
+        $attendance = Attendance::findOrFail($id);
+
+        return view('attendance.detail', compact('attendance'));
+    }
 }

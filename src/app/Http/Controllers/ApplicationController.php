@@ -14,4 +14,10 @@ class ApplicationController extends Controller
 
         return view('application.index',compact('applications'));
     }
+
+    public function detail($id)
+    {
+        $application = \App\Models\Application::findOrFail($id);
+        return view('application.detail',compact('application'));
+    }
 }

@@ -8,7 +8,7 @@
 <div class="container">
     <div class="header">
         <h2 class="heading__title">申請一覧</h2>
-</div>
+    </div>
     <div class="application_tabs">
         <ul class="tab_list">
             <li><a href="/">承認待ち</a></li>
@@ -22,7 +22,8 @@
                 <th class="application_name">名前</th>
                 <th class="target_date">対象日時</th>
                 <th class="application_reason">申請理由</th>
-                <th class="application_date">詳細</th>
+                <th class="application_date">申請日時</th>
+                <th class="application_detail">詳細</th>
             </tr>
 
             @forelse($applications as $application)
@@ -34,10 +35,13 @@
                 <td class="target_date">{{$application->target_date->format('Y-m-d H:i')}}</td>
                 <td class="application_reason">{{ $application->reason}}</td>
                 <td class="application_date">{{ $application->date}}</td>
+                <td class="application_detail">
+                    <a href="{{ route('application.detail', ['id' => $application->id]) }}" class="detail_link">詳細</a>
+                </td>
             </tr>
             @empty
             <tr>
-                <td class="no-application" colspan="5">申請はありません</td>
+                <td class="no-application" colspan="6">申請はありません</td>
             </tr>
             @endforelse
         </table>
