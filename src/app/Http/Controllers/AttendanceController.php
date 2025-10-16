@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Attendance;
+use App\Models\Application;
 use App\Models\BreakModel;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -97,8 +98,24 @@ class AttendanceController extends Controller
 
     public function detail($id)
     {
-        $attendance = Attendance::findOrFail($id);
+        $attendance = Attendance::with('user')->findOrFail($id);
 
         return view('attendance.detail', compact('attendance'));
     }
+
+    public function applyCorrection(Request $request, $id)
+    {
+        $attendance = Attendance::findOrFail($id);
+
+        Application::create([
+            'user_id' => Auth::id(),
+            'attendance_id' => $attendance->id,
+            'status' => '承認待ち',
+            'reason' => $request->input('reason'),
+            'target_date' => $attendance->work_date,
+        ]);
+
+        return redirect()->back()->with('success','申請が送信されました(承認待ち)');
+    }
+
 }

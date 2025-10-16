@@ -51,12 +51,15 @@ body {
 }
 
 .application_list_table {
+    background-color: #ffffff;
     width: 100%;
 }
 
 .application_table {
     width: 100%;
-    font-size: 14px;
+    text-align: center;
+    font-size: 16px;
+    color: #737373;
 }
 
 .application_table th {
@@ -65,5 +68,6 @@ body {
     padding: 12px;
     text-align: center;
     font-weight: bold;
+    font-size: 16px;
     border-bottom: 1px solid #ccc;
 }

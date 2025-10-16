@@ -9,6 +9,7 @@ class Application extends Model
 {
     protected $fillable = [
         'user_id',
+        'attendance_id',
         'status',
         'target_date',
         'reason',
@@ -18,4 +19,9 @@ class Application extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function attendance()
+    {
+        return $this->belongsTo(Attendance::class);
+    }
+
 }

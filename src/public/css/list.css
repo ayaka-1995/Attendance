@@ -40,6 +40,9 @@ body {
     font-weight: bold;
 }
 
+.attendance__list-table {
+    color: #737373;
+}
 .attendance-table {
     width: 100%;
     background-color: white;

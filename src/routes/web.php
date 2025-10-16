@@ -37,4 +37,5 @@ Route::middleware(['auth','verified'])->group(function(){
 
     Route::get('/stamp_correction_request/list',[ApplicationController::class,'index'])->name('applications.index');
     Route::get('/attendance/detail/{id}',[AttendanceController::class,'detail'])->name('attendance.detail');
+    Route::post('/attendance/detail/{id}', [AttendanceController::class,'applyCorrection']);
 });

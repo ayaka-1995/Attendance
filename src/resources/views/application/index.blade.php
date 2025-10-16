@@ -11,8 +11,8 @@
     </div>
     <div class="application_tabs">
         <ul class="tab_list">
-            <li><a href="/">承認待ち</a></li>
-            <li><a href="/">承認済み</a></li>
+            <li><a href="/application?status=承認待ち" class="{{ $status ==='承認待ち' ? 'active' : '' }}">承認待ち</a></li>
+            <li><a href="/application?status=承認済み" class="{{ $status ==='承認済み' ? 'active' : '' }}">承認済み</a></li>
         </ul>
     </div>
     <div class="application_list_table">
@@ -32,11 +32,11 @@
                 {{$application->status === 'pending' ? '承認待ち' : '承認済み'}}
                 </td>
                 <td class="application_name">{{ $application->user->name }}</td>
-                <td class="target_date">{{$application->target_date->format('Y-m-d H:i')}}</td>
+                <td class="target_date">{{ $application->target_date }}</td>
                 <td class="application_reason">{{ $application->reason}}</td>
                 <td class="application_date">{{ $application->date}}</td>
                 <td class="application_detail">
-                    <a href="{{ route('application.detail', ['id' => $application->id]) }}" class="detail_link">詳細</a>
+                    <a href="/application/detail/{{ $application->id }}" class="detail_link">詳細</a>
                 </td>
             </tr>
             @empty

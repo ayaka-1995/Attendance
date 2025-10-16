@@ -15,8 +15,9 @@ class CreateApplicationsTable extends Migration
     {
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('status')->default('pending');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('attendance_id')->constrained('attendances')->onDelete('cascade');
+            $table->string('status')->default('承認待ち');
             $table->date('target_date');
             $table->text('reason')->nullable();
             $table->date('approved_date')->nullable();

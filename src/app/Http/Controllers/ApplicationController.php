@@ -8,16 +8,22 @@ use Illuminate\Support\Facades\Auth;
 
 class ApplicationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $applications = Application::where('user_id', Auth::id())->get();
+        $status = $request->query('status', '承認待ち');
 
-        return view('application.index',compact('applications'));
+        $applications = Application::with('user')
+            ->where('user_id', Auth::id())
+            ->where('status', $status)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('application.index',compact('applications', 'status'));
     }
 
     public function detail($id)
     {
-        $application = \App\Models\Application::findOrFail($id);
+        $application = Application::with('user')->findOrFail($id);
         return view('application.detail',compact('application'));
     }
 }
