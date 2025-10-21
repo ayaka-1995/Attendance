@@ -29,14 +29,14 @@
             @forelse($applications as $application)
             <tr>
                 <td class="application_status">
-                {{$application->status === 'pending' ? '承認待ち' : '承認済み'}}
+                {{$application->status === '承認待ち' ? '承認待ち' : '承認済み'}}
                 </td>
                 <td class="application_name">{{ $application->user->name }}</td>
                 <td class="target_date">{{ $application->target_date }}</td>
                 <td class="application_reason">{{ $application->reason}}</td>
                 <td class="application_date">{{ $application->date}}</td>
                 <td class="application_detail">
-                    <a href="/application/detail/{{ $application->id }}" class="detail_link">詳細</a>
+                    <a href="/application/detail/{{ $application->attendance_id }}" class="detail_link">詳細</a>
                 </td>
             </tr>
             @empty

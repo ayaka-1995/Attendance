@@ -98,7 +98,7 @@ class AttendanceController extends Controller
 
     public function detail($id)
     {
-        $attendance = Attendance::with('user')->findOrFail($id);
+        $attendance = Attendance::with(['user','application'])->findOrFail($id);
 
         return view('attendance.detail', compact('attendance'));
     }
@@ -116,6 +116,16 @@ class AttendanceController extends Controller
         ]);
 
         return redirect()->back()->with('success','申請が送信されました(承認待ち)');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $attendance = Attendance::find($id);
+
+        $attendance->status = '承認待ち';
+        $attendance->save();
+
+        return redirect('/attendance/detail/' .$id);
     }
 
 }
