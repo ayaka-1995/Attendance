@@ -78,3 +78,10 @@ body {
     font-weight: 500;
     cursor: pointer;
 }
+
+.wait_message {
+    position: absolute;
+    bottom: -60px;
+    right: 0;
+    color: #ff0000;
+}

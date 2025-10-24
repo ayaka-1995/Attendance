@@ -22,7 +22,7 @@ class Attendance extends Model
 
     public function breaks()
     {
-        return $this->hasMany(BreakModel::class);
+        return $this->hasMany(BreakModel::class, 'attendance_id');
     }
 
     public function getTotalBreakTimeAttribute()
@@ -52,4 +52,5 @@ class Attendance extends Model
     {
         return $this->hasOne(Application::class, 'attendance_id');
     }
+
 }

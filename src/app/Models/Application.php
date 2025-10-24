@@ -15,10 +15,16 @@ class Application extends Model
         'reason',
         'approved_date',
     ];
+
+    protected $casts = [
+        'target_date' => 'date'
+    ];
+    
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
     public function attendance()
     {
         return $this->belongsTo(Attendance::class);

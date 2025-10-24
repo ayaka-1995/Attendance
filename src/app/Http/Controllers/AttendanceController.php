@@ -107,6 +107,19 @@ class AttendanceController extends Controller
     {
         $attendance = Attendance::findOrFail($id);
 
+        $attendance->update([
+            'clock_in_time' =>$request->input('clock_in_time'),
+            'clock_out_time' => $request->input('clock_out_time'),
+            'status' => '承認待ち',
+        ]);
+
+        $attendance->breaks()->updateOrCreate(
+            [],
+            [
+            'break_start_time' =>$request->input('break_start'),
+            'break_end_time' =>$request->input('break_end'),
+        ]);
+
         Application::create([
             'user_id' => Auth::id(),
             'attendance_id' => $attendance->id,
@@ -118,14 +131,5 @@ class AttendanceController extends Controller
         return redirect()->back()->with('success','申請が送信されました(承認待ち)');
     }
 
-    public function update(Request $request, $id)
-    {
-        $attendance = Attendance::find($id);
-
-        $attendance->status = '承認待ち';
-        $attendance->save();
-
-        return redirect('/attendance/detail/' .$id);
-    }
 
 }

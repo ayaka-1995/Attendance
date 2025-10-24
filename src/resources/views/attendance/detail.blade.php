@@ -31,9 +31,12 @@
                 <tr>
                     <th class="breaks">休憩</th>
                     <td class="breaks">
-                    <input type="time" name="break_start" value="{{ $attendance->break_start ? \Carbon\Carbon::parse($attendance->break_start)->format('H:i') : ''}}" class="time_input"
+                        @php
+                            $firstBreak = $attendance->breaks->first();
+                        @endphp
+                    <input type="time" name="break_start" value="{{ $firstBreak ? \Carbon\Carbon::parse($attendance->break_start)->format('H:i') : ''}}" class="time_input"
                     {{ isset($attendance->application) && $attendance->application->status === '承認待ち' ? 'readonly' : ''}}>〜
-                        <input type="time" name="break_end" value="{{ $attendance->break_end ? \Carbon\Carbon::parse($attendance->break_end)->format('H:i') : ''}}" class="time_input"
+                        <input type="time" name="break_end" value="{{ $firstBreak && $firstBreak->break_end_time ? \Carbon\Carbon::parse($attendance->break_end)->format('H:i') : ''}}" class="time_input"
                         {{ isset($attendance->application) && $attendance->application->status === '承認待ち' ? 'readonly' : ''}}>
                     </td>
                 </tr>

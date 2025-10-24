@@ -17,7 +17,7 @@
                 </tr>
                 <tr>
                     <th>日付</th>
-                    <td>{{$application->date->format('Y年m月d日')}}</td>
+                    <td>{{$application->target_date ? $application->target_date->format('Y年m月d日') : '未設定'}}</td>
                 </tr>
                 <tr>
                     <th>出勤・退勤</th>
@@ -43,7 +43,7 @@
                 <tr>
                     <th>備考</th>
                     <td>
-                        <input type="text" class="remark_input" placeholder="遅延のため">
+                        <input type="text" class="remark_input" placeholder="">
                     </td>
                 </tr>
             </table>
