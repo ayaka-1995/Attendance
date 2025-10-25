@@ -11,8 +11,8 @@
     </div>
     <div class="application_tabs">
         <ul class="tab_list">
-            <li><a href="/application?status=承認待ち" class="{{ $status ==='承認待ち' ? 'active' : '' }}">承認待ち</a></li>
-            <li><a href="/application?status=承認済み" class="{{ $status ==='承認済み' ? 'active' : '' }}">承認済み</a></li>
+            <li><a href="/stamp_correction_request/list?status=承認待ち" class="{{ $status ==='承認待ち' ? 'active' : '' }}">承認待ち</a></li>
+            <li><a href="/stamp_correction_request/list?status=承認済み" class="{{ $status ==='承認済み' ? 'active' : '' }}">承認済み</a></li>
         </ul>
     </div>
     <div class="application_list_table">
