@@ -13,7 +13,26 @@ class AttendanceController extends Controller
 {
     public function index()
     {
-        return view('attendance.index');
+        $user = Auth::user();
+        $today = Carbon::today();
+
+        $attendance = Attendance::where('user_id', $user->id)
+                ->where('work_date', $today->toDateString())
+                ->with('breaks')
+                ->first();
+
+
+        if (!$attendance){
+            $status = '勤務外';
+        }elseif(!$attendance->clock_out_time){
+            $lastBreak = $attendance->breaks()->latest()->first();
+            if($lastBreak && is_null($lastBreak->break_end_time)){
+                $status = '休憩中';
+            }else{
+                $status = '勤務外';
+            }
+        return view('attendance.index', compact('status'));
+        }
     }
 
     public function store(Request $request)
@@ -98,7 +117,7 @@ class AttendanceController extends Controller
 
     public function detail($id)
     {
-        $attendance = Attendance::with(['user','application'])->findOrFail($id);
+        $attendance = Attendance::with('user','application')->findOrFail($id);
 
         return view('attendance.detail', compact('attendance'));
     }

@@ -36,7 +36,7 @@
                 <td class="application_reason">{{ $application->reason}}</td>
                 <td class="application_date">{{ $application->date}}</td>
                 <td class="application_detail">
-                    <a href="/application/detail/{{ $application->attendance_id }}" class="detail_link">詳細</a>
+                    <a href="/attendance/detail/{{ $application->attendance_id }}" class="detail_link">詳細</a>
                 </td>
             </tr>
             @empty
