@@ -15,6 +15,7 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
         $today = Carbon::today();
+        $message = null;
 
         $attendance = Attendance::where('user_id', $user->id)
                 ->where('work_date', $today->toDateString())
@@ -29,10 +30,13 @@ class AttendanceController extends Controller
             if($lastBreak && is_null($lastBreak->break_end_time)){
                 $status = '休憩中';
             }else{
-                $status = '勤務外';
+                $status = '勤務中';
             }
-        return view('attendance.index', compact('status'));
         }
+        else{
+            $status = '勤務外';
+        }
+        return view('attendance.index', compact('status'));
     }
 
     public function store(Request $request)
@@ -86,15 +90,14 @@ class AttendanceController extends Controller
             ->first();
 
             if($attendance && is_null($attendance->clock_out_time)){
-                $attendance->update([
-                    'clock_out_time' => $now->toTimeString(),
-                ]);
+                $attendance->update(['clock_out_time' => $now->toTimeString()]);
+                $message = 'お疲れ様でした';
             }
     }
 
 
 
-        return redirect('/attendance');
+        return view('attendance.index');
     }
 
     public function list(Request $request)

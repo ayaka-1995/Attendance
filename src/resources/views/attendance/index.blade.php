@@ -20,27 +20,39 @@
 
     <div class="attendance__button">
         @if($status === '勤務外')
-        <form action="/attendance" method="POST">
+        <div class="form-work_out">
+            <form action="/attendance" method="POST">
             @csrf
-            <button type="submit" name="clock_in" class="attendance__button-submit">出勤</button>
-        </form>
-        @elseif($status === '勤務中')
-        <form action="/attendance" method="POST">
-            @csrf
-            <button type="submit" name="break_start" class="attendance__button-button">休憩入</button>
-        </form>
+                <button type="submit" name="clock_in" class="attendance__button-submit">出勤</button>
+            </form>
+        </div>
 
-        <form action="/attendance" method="POST">
-            @csrf
-            <button type="submit" name="clock_out" class="attendance__button-submit">退勤</button>
-        </form>
+            @elseif($status === '勤務中')
+            <div class="form-work_in">
+                <form action="/attendance" method="POST">
+                @csrf
+                    <button type="submit" name="clock_out" class="attendance__button-submit">退勤</button>
+                </form>
+
+                <form action="/attendance" method="POST">
+                @csrf
+                    <button type="submit" name="break_start" class="attendance__button-button">休憩入</button>
+                </form>
+            </div>
 
         @elseif($status === '休憩中')
-        <form action="/attendance" method="POST">
-            @csrf
-            <button type="submit" name="break_end" class="attendance__button-button">休憩戻</button>
-        </form>
+        <div class="form_break">
+            <form action="/attendance" method="POST">
+                @csrf
+                <button type="submit" name="break_end" class="attendance__button-button">休憩戻</button>
+            </form>
         @endif
+        </div>
     </div>
+
+    @if(!empty($message))
+        <div class="attendance_message">{{ $message }}</div>
+    @endif
+        </div>
 </div>
 @endsection

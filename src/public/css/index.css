@@ -35,6 +35,18 @@ body {
     font-weight: bold;
 }
 
+.attendance__button-submit,
+.attendance_button-button {
+    font-size: 32px;
+    font-weight: 700;
+    padding: 14px 60px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 100px;
+}
+
 .attendance__button-submit {
     background-color: #000;
     color: #fff;
@@ -59,4 +71,17 @@ body {
     cursor: pointer;
     transition: background-color 0.2s ease;
     margin-top: 100px;
+}
+
+.form-work_in {
+    display: flex;
+    justify-content: center;
+    gap: 200px;
+}
+.attendance_message {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #000;
 }

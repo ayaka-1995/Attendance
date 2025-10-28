@@ -71,3 +71,14 @@ body {
     font-size: 16px;
     border-bottom: 1px solid #ccc;
 }
+
+.application_table td {
+    text-align: center;
+    padding: 10px 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.detail_link {
+    text-decoration: none;
+    color: #000;
+}
