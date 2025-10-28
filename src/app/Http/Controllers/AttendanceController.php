@@ -15,7 +15,6 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
         $today = Carbon::today();
-        $message = null;
 
         $attendance = Attendance::where('user_id', $user->id)
                 ->where('work_date', $today->toDateString())
@@ -25,15 +24,15 @@ class AttendanceController extends Controller
 
         if (!$attendance){
             $status = '勤務外';
-        }elseif(!$attendance->clock_out_time){
+        }
+        elseif (!$attendance->clock_out_time){
             $lastBreak = $attendance->breaks()->latest()->first();
             if($lastBreak && is_null($lastBreak->break_end_time)){
                 $status = '休憩中';
             }else{
                 $status = '勤務中';
             }
-        }
-        else{
+        } else{
             $status = '勤務外';
         }
         return view('attendance.index', compact('status'));
@@ -45,11 +44,22 @@ class AttendanceController extends Controller
         $now = Carbon::now();
 
     if($request->has('clock_in')) {
+
+        $attendance = Attendance::where('user_id', $user->id)
+                    ->where('work_date', $now->toDateString())
+                    ->first();
+
+        if(!$attendance){
             Attendance::create([
                 'user_id' => $user->id,
                 'work_date' => $now->toDateString(),
-                'clock_in_time' => $now->toTimeString(),
-        ]);
+                'clock_in_time' =>$now->toTimeString(),
+            ]);
+        }elseif(is_null($attendance->clock_in_time)){
+                $attendance->update(['clock_in_time' => $now->toTimeString()]);
+            }
+
+            return redirect('/attendance');
     }
 
     if($request->has('break_start')){
@@ -63,8 +73,10 @@ class AttendanceController extends Controller
                     'break_start_time' => $now->toTimeString(),
                 ]);
             }
+
+            return redirect('/attendance');
     }
-    
+
     if($request->has('break_end')) {
         $attendance = Attendance::where('user_id' , $user->id)
             ->where('work_date', $now->toDateString())
@@ -82,6 +94,8 @@ class AttendanceController extends Controller
                         ]);
                     }
             }
+            
+            return redirect('/attendance');
     }
 
     if($request->has('clock_out')){
@@ -91,13 +105,11 @@ class AttendanceController extends Controller
 
             if($attendance && is_null($attendance->clock_out_time)){
                 $attendance->update(['clock_out_time' => $now->toTimeString()]);
-                $message = 'お疲れ様でした';
             }
+
+            return redirect('/attendance');
     }
-
-
-
-        return view('attendance.index');
+        return redirect('/attendance');
     }
 
     public function list(Request $request)

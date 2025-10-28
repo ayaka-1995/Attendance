@@ -15,8 +15,6 @@ class Attendance extends Model
         'work_date',
         'clock_in_time',
         'clock_out_time',
-        'break_start_time',
-        'break_end_time',
         'comment_section',
     ];
 

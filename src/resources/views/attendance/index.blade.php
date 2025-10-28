@@ -49,10 +49,5 @@
         @endif
         </div>
     </div>
-
-    @if(!empty($message))
-        <div class="attendance_message">{{ $message }}</div>
-    @endif
-        </div>
 </div>
 @endsection
