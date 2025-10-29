@@ -24,65 +24,42 @@ class AttendanceController extends Controller
 
         if (!$attendance){
             $status = '勤務外';
-        }
-        elseif (!$attendance->clock_out_time){
+        }elseif ($attendance->clock_in_time && !$attendance->clock_out_time){
             $lastBreak = $attendance->breaks()->latest()->first();
-            if($lastBreak && is_null($lastBreak->break_end_time)){
-                $status = '休憩中';
+            $status = ($lastBreak && is_null($lastBreak->break_end_time)) ? '休憩中' : '勤務中';
             }else{
-                $status = '勤務中';
+                $status = '勤務外';
             }
-        } else{
-            $status = '勤務外';
-        }
-        return view('attendance.index', compact('status'));
+
+        return view('attendance.index', compact('status', 'user'));
     }
 
     public function store(Request $request)
     {
         $user = Auth::user();
         $now = Carbon::now();
+        $today = $now->toDateString();
 
-    if($request->has('clock_in')) {
+        $attendance = Attendance::firstOrCreate(
+            ['user_id' => $user->id, 'work_date' => $today],
+            ['clock_in_time' => null, 'clock_out_time' =>null]
+        );
 
-        $attendance = Attendance::where('user_id', $user->id)
-                    ->where('work_date', $now->toDateString())
-                    ->first();
+        //出勤
+        if($request->has('clock_in') && is_null($attendance->clock_in_time)){
+            $attendance->update(['clock_in_time' => $now->toTimeString()]);
+        }
 
-        if(!$attendance){
-            Attendance::create([
-                'user_id' => $user->id,
-                'work_date' => $now->toDateString(),
-                'clock_in_time' =>$now->toTimeString(),
-            ]);
-        }elseif(is_null($attendance->clock_in_time)){
-                $attendance->update(['clock_in_time' => $now->toTimeString()]);
-            }
-
-            return redirect('/attendance');
-    }
-
-    if($request->has('break_start')){
-        $attendance = Attendance::where('user_id', $user->id)
-            ->where('work_date', $now->toDateString())
-            ->first();
-
-            if($attendance){
+        //休憩開始
+        if($request->has('break_start')){
                 BreakModel::create([
                     'attendance_id' => $attendance->id,
                     'break_start_time' => $now->toTimeString(),
                 ]);
-            }
-
-            return redirect('/attendance');
     }
 
-    if($request->has('break_end')) {
-        $attendance = Attendance::where('user_id' , $user->id)
-            ->where('work_date', $now->toDateString())
-            ->first();
-
-            if($attendance){
+        //休憩終了
+        if($request->has('break_end')) {
                 $lastBreak = BreakModel::where('attendance_id', $attendance->id)
                     ->whereNull('break_end_time')
                     ->latest()
@@ -93,24 +70,16 @@ class AttendanceController extends Controller
                             'break_end_time' => $now->toTimeString(),
                         ]);
                     }
-            }
-            
-            return redirect('/attendance');
     }
 
-    if($request->has('clock_out')){
-        $attendance = Attendance::where('user_id', $user->id)
-            ->where('work_date', $now->toDateString())
-            ->first();
-
-            if($attendance && is_null($attendance->clock_out_time)){
-                $attendance->update(['clock_out_time' => $now->toTimeString()]);
+        //退勤
+        if($request->has('clock_out') && is_null($attendance->clock_out_time)){
+            $attendance->update(['clock_out_time' => $now->toTimeString()]);
             }
 
             return redirect('/attendance');
     }
-        return redirect('/attendance');
-    }
+
 
     public function list(Request $request)
     {
