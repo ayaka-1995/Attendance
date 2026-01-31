@@ -5,41 +5,32 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Attendance</title>
+  <title>勤怠管理システム</title>
   <link rel="stylesheet" href="{{ asset('css/sanitize.css') }}">
   <link rel="stylesheet" href="{{ asset('css/common.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
   @yield('css')
 </head>
 
 <body>
   <header class="header">
     <div class="header__inner">
-      <div class="header-utilities">
-        <a class="header__logo" href="/">
-          <img src="{{ asset('img/logo.png') }}" alt="coachtech">
+      <a class="header__logo" href="/">
+          <img class="header__logo--img" src="{{ asset('img/logo.png') }}" alt="logo">
         </a>
-        <nav>
-          <ul class="header-nav">
-            @if (Auth::check())
-            <li class="header-nav__item">
-              <a class="header-nav__link" href="/attendance">勤怠</a>
-            </li>
-            <li class="header-nav__item">
-                <a class="header-nav__link" href="/attendance/list">勤怠一覧</a>
-            </li>
-            <li class="header-nav__item">
-                <a class="header-nav__link" href="/stamp_correction_request/list">申請</a>
-            </li>
-            <li class="header-nav__item">
-              <form action="/logout" class="header__form" method="post">
-                @csrf
-                <button class="header-nav__button--logout" type="submit">ログアウト</button>
-              </form>
-            </li>
-            @endif
-          </ul>
-        </nav>
-      </div>
+        @if(Auth::check())
+        <form action="/logout" method="post">
+          @csrf
+          <div class="inner__group">
+            <a class="inner__group--item" href="/attendance">勤怠</a>
+            <a href="inner__group--item" href="/attendance/list">勤怠一覧</a>
+            <a href="inner__group--item" href="/stamp_correction_request">申請</a>
+            <button class="inner__group--item logout-button">ログアウト</button>
+          </div>
+        </form>
+        @endif
     </div>
   </header>
 
