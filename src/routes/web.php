@@ -75,8 +75,9 @@ use App\Http\Controllers\AuthController; //ログイン・ログアウト・登�
 // Route::get('/admin/login', [AuthController::class, 'adminLogin']);//管理者ログイン画面
 // Route::post('/admin/login', [AuthController::class, 'adminDoLogin']);//管理者ログイン処理
 
-// Route::post('/login', [AuthController::class, 'doLogin']);//一般ユーザーログイン
-// Route::post('/logout', [AuthController::class, 'doLogout']);//ログアウト
+Route::get('/login',[AuthController::class, 'userLogin']);
+Route::post('/login', [AuthController::class, 'doLogin']);//一般ユーザーログイン
+Route::post('/logout', [AuthController::class, 'doLogout']);//ログアウト
 Route::get('/register',[AuthController::class,'register']);
 Route::post('/register', [AuthController::class, 'store']);//会員登録
 // Route::get('/email/verify', function(){//メール認証を促す画面表示

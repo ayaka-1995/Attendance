@@ -11,7 +11,12 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    protected $creator;//use App\Actions\Fortify\CreateNewUserと繋がる。protected=外に出さない共有変数、$creator処理を委譲する相手
+    // protected $creator;//use App\Actions\Fortify\CreateNewUserと繋がる。protected=外に出さない共有変数、$creator処理を委譲する相手
+    
+    // public function __construct(CreateNewUser $creator)
+    // {
+    //     $this->creator = $creator;//その道具はCreateNewUserという種類で、Laravelが用意して渡す
+    // }
 
     public function register()
     {
@@ -21,7 +26,47 @@ class AuthController extends Controller
     public function store(RegisterRequest $request)
     {
         $user = $this->creator->create($request->all());
-        $user->sendEmailVerificationNotification();
-        return redirect('/register')->with('message','登録が完了しました。認証メールを送信しましたのでご確認ください。');
+        //$user->sendEmailVerificationNotification();
+        //仮登録処理（後でFortifyに戻す）
+        return redirect('/register');//->with('message','登録が完了しました。認証メールを送信しましたのでご確認ください。');
     }
+
+    public function userLogin()
+    {
+        return view('user.user-login');
+    }
+
+    public function doLogin(LoginRequest $request)
+    {
+        $credentials = $request->only('email','password');
+
+        if(Auth::attempt($credentials)){
+            $user = Auth::user();
+
+            // if(!$user->hasVerifiedEmail()){
+            //     Auth::logout();
+            //     $this->sendVerificationEmail($user);
+            return redirect()->back()->withErrors([
+                    'email' => 'メール認証が必要です。認証メールを再送信しました。'
+                ]);
+            // }
+            return redirect()->intended('/login');
+        }
+
+        // return redirect()->back()->withErrors([
+        //     'email' => 'ログイン情報が登録されていません'
+        // ]);
+    }
+
+
+    public function doLogout()
+    {
+        Auth::logout();
+        return redirect('/login');
+    }
+
+    // protected function sendVerificationEmail($user)
+    // {
+    //     $user->sendEmailVerificationNotification();
+    // }
 }
