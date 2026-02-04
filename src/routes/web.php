@@ -1,7 +1,7 @@
 <?php
 
 // use Illuminate\Support\Facades\Route; // ルーティング機能を使う
-// use App\Http\Controllers\UserController; //一般ユーザー用の処理
+ use App\Http\Controllers\UserController; //一般ユーザー用の処理
 // use App\Http\Controllers\AdminController; //管理者用の処理
 use App\Http\Controllers\AuthController; //ログイン・ログアウト・登録処理
 // use App\Http\Controllers\MiddlewareController;
@@ -22,12 +22,12 @@ use App\Http\Controllers\AuthController; //ログイン・ログアウト・登�
 |
 */
 
-// Route::middleware('auth')->group(function(){ //ログインしている人だけがアクセスできる
-//     Route::get('/attendance', [UserController::class, 'index']); //勤怠打刻画面を表示する
-//     Route::post('/attendance', [UserController::class, 'attendance']);//出退勤ボタンを押した時の処理
-//     Route::get('/attendance/list', [UserController::class, 'list']);//勤怠一覧画面を表示
-//     Route::get('/attendance/{id}', [UserController::class, 'applicationDetail']);//勤怠修正申請の詳細を表示
-// });
+Route::middleware('auth')->group(function(){ //ログインしている人だけがアクセスできる
+    Route::get('/attendance', [UserController::class, 'index']); //勤怠打刻画面を表示する
+    Route::post('/attendance', [UserController::class, 'attendance']);//出退勤ボタンを押した時の処理
+    Route::get('/attendance/list', [UserController::class, 'list']);//勤怠一覧画面を表示
+    Route::get('/attendance/{id}', [UserController::class, 'applicationDetail']);//勤怠修正申請の詳細を表示
+});
 
 // Route::middleware(['auth'])->group(function(){//管理者向け（ログイン必須）
 //     //管理画面系
