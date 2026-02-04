@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'admin_status',//権限
+        'attendance_status'//今勤務中か？
     ];
 
     /**
@@ -41,4 +43,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function attendanceRecords()
+    {
+        return $this->hasMany(AttendanceRecord::class);//この人の勤怠履歴
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class);//この人が出した申請
+    }
 }
