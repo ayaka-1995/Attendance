@@ -1,7 +1,7 @@
 <?php
 
-// use Illuminate\Support\Facades\Route; // ルーティング機能を使う
- use App\Http\Controllers\UserController; //一般ユーザー用の処理
+use Illuminate\Support\Facades\Route; // ルーティング機能を使う
+use App\Http\Controllers\UserController; //一般ユーザー用の処理
 // use App\Http\Controllers\AdminController; //管理者用の処理
 use App\Http\Controllers\AuthController; //ログイン・ログアウト・登録処理
 // use App\Http\Controllers\MiddlewareController;

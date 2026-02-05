@@ -36,6 +36,7 @@ class AuthController extends Controller
         return view('user.user-login');
     }
 
+
     public function doLogin(LoginRequest $request)
     {
         $credentials = $request->only('email','password');
@@ -46,16 +47,16 @@ class AuthController extends Controller
             // if(!$user->hasVerifiedEmail()){
             //     Auth::logout();
             //     $this->sendVerificationEmail($user);
-            return redirect()->back()->withErrors([
-                    'email' => 'メール認証が必要です。認証メールを再送信しました。'
-                ]);
+            //     return redirect()->back()->withErrors([
+            //     'email' => 'メール認証が必要です。認証メールを再送信しました。'
+            //     ]);
             // }
-            return redirect()->intended('/login');
+            return redirect('/attendance');//->intended('/login');
         }
 
-        // return redirect()->back()->withErrors([
-        //     'email' => 'ログイン情報が登録されていません'
-        // ]);
+        return redirect()->back()->withErrors([
+            'email' => 'ログイン情報が登録されていません'
+        ]);
     }
 
 

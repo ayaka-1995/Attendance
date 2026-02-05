@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+//use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\AttendanceBreak;
 
 class AttendanceRecord extends Model//１日分の勤怠（勤怠の本体）
 {
-    use HasFactory;
+    //use HasFactory;
 
     protected $fillable = [
         'user_id',

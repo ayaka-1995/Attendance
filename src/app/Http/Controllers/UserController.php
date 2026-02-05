@@ -58,7 +58,7 @@ class UserController extends Controller
             return redirect('/attendance')->withErrors('出勤していません。先に「出勤」をしてください。');
         }
 
-        if($action === 'clock__in' && $user->attendance_status ==='勤務外'){
+        if($action === 'clock_in' && $user->attendance_status ==='勤務外'){
             $attendance             = new AttendanceRecord();
             $attendance->user_id    = $user_id;
             $attendance->date       = now();
