@@ -126,4 +126,38 @@ class UserController extends Controller
 
     return redirect('/attendance');
     }
+
+    public function list(Request $request)
+    {
+        $user = Auth::user();
+        $date = Carbon::parse($request->query('date', now()));
+
+        $startOfMonth = $date->copy()->startOfMonth();
+        $endOfMonth = $date->copy()->endOfMonth();
+
+        $attendanceRecords = AttendanceRecord::where('user_id', $user->id)
+            ->whereBetween('date',[$startOfMonth, $endOfMonth])
+            ->get();
+
+
+        $formatted = $attendanceRecords->map(function ($rec){
+            $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+            $d = Carbon::parse($rec->date);
+            return [
+                'id'               => $rec->id,
+                'date'             => $d->format('m/d') . "({$weekdays[$d->dayOfWeek]})",
+                'clock_in'         => $rec->clock_in ? Carbon::parse($rec->clock_in)->format('H:i') : null,
+                'clock_out'        => $rec->clock_out ? Carbon::parse($rec->clock_out)->format('H:i') :null,
+                'total_time'       => $rec->total_time,
+                'total_break_time' => $rec->total_beak_time,
+            ];
+        });
+
+        return view('user/user-attendance-list', [
+            'formattedAttendanceRecords' => $formatted,
+            'date'         => $date,
+            'nextMonth' => $date->copy()->addMonth()->format('Y-m'),
+            'previousMonth' => $date->copy()->subMonth()->format('Y-m'),
+        ]);
+    }
 }
