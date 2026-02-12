@@ -12,11 +12,41 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     // protected $creator;//use App\Actions\Fortify\CreateNewUserと繋がる。protected=外に出さない共有変数、$creator処理を委譲する相手
-    
+
     // public function __construct(CreateNewUser $creator)
     // {
     //     $this->creator = $creator;//その道具はCreateNewUserという種類で、Laravelが用意して渡す
     // }
+
+    public function adminLogin()
+    {
+        return view('admin/admin-login');
+    }
+
+    public function adminDoLogin(AdminLoginRequest $request)
+    {
+        if (Auth::attempt($request->only('email', 'password'))) {
+            $user = Auth::user();
+
+            if ($user->admin_status) {
+                return redirect('admin/attendance/list');
+            } else {
+                Auth::logout();
+                return redirect()->back()->withErrors([
+                    'email' => 'ログイン情報が登録されていません'
+                ]);
+            }
+        }
+        return redirect()->back()->withErrors([
+            'email' => 'ログイン情報が登録されていません'
+        ])->withInput();
+    }
+
+    public function adminLogout()
+    {
+        Auth::logout();
+        return redirect('/admin/login');
+    }
 
     public function register()
     {

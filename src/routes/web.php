@@ -41,7 +41,8 @@ Route::middleware('auth')->group(function(){ //ログインしている人だけ
 //     Route::post('/export', [AdminController::class, 'export']);//勤怠データをCSVなどでエクスポート
 // });
 
-// //管理者か一般ユーザーかで処理を切り替えるルート
+
+//管理者か一般ユーザーかで処理を切り替えるルート
 // Route::middleware(['auth', AdminStatusMiddleware::class])->group(function(){//ログイン必須、管理者フラグをチェック
 //     Route::get('/stamp_correction_request/list', function(Request $request){//直前の画面が/adminから来ていて
 //         if($request->headers->has('referer') && str_contains($request->headers->get('referer'), '/admin')){
@@ -52,15 +53,15 @@ Route::middleware('auth')->group(function(){ //ログインしている人だけ
 //             return app(UserController::class)->applicationList($request);
 //         }
 //     });
-    // Route::get('/attendance/{id}',function($id, Request $request){//勤怠詳細画面（共通URL)
-    //     if($request->headers->has('referer') && str_contains($request->headers->get('referer'), 'admin')){
-    //         if(auth()->user()->admin_status){//管理画面から来た管理者→管理者用詳細
-    //             return app(AdminController::class)->detail($id);
-    //         }
-    //     } else{//一般ユーザー→自分の勤怠詳細
-    //         return app(UserController::class)->detail($id);
-    //     }
-    // });
+//     Route::get('/attendance/{id}',function($id, Request $request){//勤怠詳細画面（共通URL)
+//         if($request->headers->has('referer') && str_contains($request->headers->get('referer'), 'admin')){
+//             if(auth()->user()->admin_status){//管理画面から来た管理者→管理者用詳細
+//                 return app(AdminController::class)->detail($id);
+//             }
+//         } else{//一般ユーザー→自分の勤怠詳細
+//             return app(UserController::class)->detail($id);
+//         }
+//     });
 //     Route::post('/attendance/{id}', function (CorrectionRequest $request, $id){//勤怠修正申請の送信
 //         if(auth()->user()->admin_status){//管理者→管理者用修正処理
 //             if(auth()->user()->admin_status){
@@ -72,8 +73,8 @@ Route::middleware('auth')->group(function(){ //ログインしている人だけ
 //     });
 // });
 
-// Route::get('/admin/login', [AuthController::class, 'adminLogin']);//管理者ログイン画面
-// Route::post('/admin/login', [AuthController::class, 'adminDoLogin']);//管理者ログイン処理
+Route::get('/admin/login', [AuthController::class, 'adminLogin']);//管理者ログイン画面
+Route::post('/admin/login', [AuthController::class, 'adminDoLogin']);//管理者ログイン処理
 
 Route::get('/login',[AuthController::class, 'userLogin']);
 Route::post('/login', [AuthController::class, 'doLogin']);//一般ユーザーログイン

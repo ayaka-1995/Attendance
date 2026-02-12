@@ -14,17 +14,16 @@ use App\Http\Requests\CorrectionRequest;
 
 class UserController extends Controller
 {
-
     public function index()
     {
         $user = Auth::user();
 
-        if($user->attendance_status === '退勤済'){
+        if ($user->attendance_status === '退勤済'){
             $attendance = AttendanceRecord::where('user_id', $user->id)
                     ->whereDate('date', now()->format('Y-m-d'))
                     ->first();
 
-            if(! $attendance){
+            if (! $attendance){
                 $user->attendance_status = '勤務外';
                 $user->save();
             }
@@ -54,13 +53,13 @@ class UserController extends Controller
                 ->whereDate('date', now()->toDateString())
                 ->first();
 
-        if(in_array($action, ['break_in', 'break_out', 'clock_out']) && !$attendance){
+        if (in_array($action, ['break_in', 'break_out', 'clock_out']) && ! $attendance){
             return redirect('/attendance')->withErrors('出勤していません。先に「出勤」をしてください。');
         }
 
-        if($action === 'clock_in' && $user->attendance_status ==='勤務外'){
+        if ($action === 'clock_in' && $user->attendance_status ==='勤務外') {
             $attendance             = new AttendanceRecord();
-            $attendance->user_id    = $user_id;
+            $attendance->user_id    = $user->id;
             $attendance->date       = now();
             $attendance->clock_in   = Carbon::now();
             $attendance->save();
@@ -68,37 +67,63 @@ class UserController extends Controller
             $user->attendance_status = '出勤中';
             $user->save();
 
-        } elseif ($action === 'break_in' && $user->attendance_status === '出勤中'){
+        } elseif ($action === 'break_in' && $user->attendance_status === '出勤中') {
             $attendance->breaks()->create([
                 'break_in' => Carbon::now(),
             ]);
 
-            $clockIn = Carbon::parse($attendance->clock_in);
-            $clockOut = Carbon::parse($attendance->clock_out);
-
-            $totalBreakTime = 0;
-            foreach ($attendance->breaks as $b){
-                if($b->break_in && $b->break_out){
-                    $totalBreakTime +=
-                        Carbon::parse($b->break_in)
-                                ->diffInMinutes(Carbon::parse($b->break_out));
-                }
-            }
-
-            $attendance->total_break_time = sprintf(
-                '%02d:%02d',
-                floor($totalBreakTime/60),
-                $workedMins%60
-            );
-
-            $attendance->save();
-
-            $user->attendance_status = '退勤済';
+            $user->attendance_status = '休憩中';
             $user->save();
+
+    } elseif ($action === 'break_out'  && $user->attendance_status === '休憩中') {
+        $currentBreak = $attendance
+            ->breaks()
+            ->whereNull('break_out')
+            ->latest()
+            ->first();
+
+        if ($currentBreak){
+            $currentBreak->break_out = Carbon::now();
+            $currentBreak->save();
         }
 
-        return redirect('/attendance');
+        $user->attendance_status = '出勤中';
+        $user->save();
+
+    } elseif ($action === 'clock_out' && $user->attendance_status === '出勤中') {
+        $attendance->clock_out = Carbon::now();
+
+        $clockIn  = Carbon::parse($attendance->clock_in);
+        $clockOut = Carbon::parse($attendance->clock_out);
+
+        $totalBreakTime = 0;
+        foreach($attendance->breaks as $b) {
+            if ($b->break_in && $b->break_out) {
+                $totalBreakTime +=
+                    Carbon::parse($b->break_in)
+                        ->diffInMinutes(Carbon::parse($b->break_out));
+            }
+        }
+
+        $attendance->total_break_time = sprintf(
+            '%02d:%02d',
+            floor($totalBreakTime/60),
+            $totalBreakTime%60
+        );
+
+        $workedMins = $clockIn->diffInMinutes($clockOut) - $totalBreakTime;
+        $attendance->total_time = sprintf(
+            '%02d:%02d',
+            floor($workedMins/60),
+            $workedMins%60
+        );
+
+        $attendance->save();
+
+        $user->attendance_status = '退勤済';
+        $user->save();
     }
 
-    
+    return redirect('/attendance');
+    }
 }
