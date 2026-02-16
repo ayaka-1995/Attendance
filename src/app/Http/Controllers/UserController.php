@@ -160,4 +160,74 @@ class UserController extends Controller
             'previousMonth' => $date->copy()->subMonth()->format('Y-m'),
         ]);
     }
+
+    public function detail($id)//確定している勤怠の詳細画面
+    {
+        $attendanceRecord = AttendanceRecord::findOrFail($id);
+        $user = Auth::user();
+
+        //マスター休憩
+        $masterBreaks = $attendanceRecord->breaks()->get()->map(function ($b){
+            return [
+                'break_in' => $b->break_in ? Carbon::parse($b->break_in)->format('H:i') : null,
+                'break_out' => $b->break_out ? Carbon::parse($b->break_out)->format('H:i') : null,
+            ];
+        })->toArray();
+
+        //未承認申請
+        $application = Application::where('attendance_record_id', $id)
+            ->where('approval_status', '承認待ち')
+            ->first();
+        $proposal = [];
+        if ($application){
+            $proposal = $application->proposalBreaks()->get()->map(function ($b){
+                return [
+                    'break_in' => Carbon::parse($b->break_in)->format('H:i'),
+                    'break_out' => $b->break_out ? Carbon::parse($b->break_out)->format('H:i') : null,
+                ];
+            })->toArray();
+        }
+
+        $data = [
+            'id'              => $attendanceRecord->id,
+            'year'            => $attendanceRecord->date ? Carbon::parse($attendanceRecord->date)->format('Y年') : null,
+            'date'            => $attendanceRecord->date ? Carbon::parse($attendanceRecord->date)->format('m月d日') : null,
+            'clock_in'        => $attendanceRecord->clock_in ? Carbon::parse($attendanceRecord->clock_in)->format('H:i') : null,//実際の出勤時間
+            'clock_out'       => $attendanceRecord->clock_out ? Carbon::parse($attendanceRecord->clock_out)->format('H:i') : null,//実際の退勤時間
+            'breaks'          => $masterBreaks,//実際に保存されている休憩時間
+            'proposal_breaks' => $proposal,//修正申請で提出された”変更案の休憩時間”
+            'comment'         => $attendanceRecord->comment,
+            'application'     => $application,
+        ];
+        return view ('user/user-detail', compact('user', 'data'));
+    }
+
+    public function applicationDetail($id)//まだ承認されていない提案データ
+    {
+        $user = Auth::user();
+        $application = Application::findOrFail($id);
+
+        $proposalBreaks = $application->proposalBreaks()->get()->map(function ($b){
+            return [
+                'break_in' => $b->break_in ? Carbon::parse($b->break_in)->format('H:i') : null,
+                'break_out' => $b->break_out ? Carbon::parse($b->break_out)->format('H:i') : null,
+            ];
+        })->toArray();
+
+        $date = [
+            'id'                 =>$application->id,
+            //変更後日付
+            'year'               =>$application->new_date ? Carbon::parse($application->new_date)->format('Y年') : null,
+            'date'               =>$application->new_date ? Carbon::parse($application->new_date)->format('m月d日') : null,
+            //変更後出勤
+            'clock_in'           =>$application->new_date ? Carbon::parse($application->new_clock_in)->format('H:i') : null,
+            //変更後退勤
+            'clock_out'          =>$application->new_date ? Carbon::parse($application->new_clock_out)->format('H:i') : null,
+            'breaks'             =>$proposalBreaks,//変更後退勤
+            'comment'            =>$application->comment,
+            'application'        =>$application,
+        ];
+
+        return view('user/user-detail', compact('user', 'data'));
+    }
 }

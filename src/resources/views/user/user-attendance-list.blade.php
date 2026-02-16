@@ -58,7 +58,7 @@
                 <p class="table__description--item">{{ $attendanceRecord['total_time'] }}</p>
             </td>
             <td class="table__description">
-                <p class="table__item--detail-link" href="{{ url('/attendance/' .$attendanceRecord['id']) }}">詳細</p>
+                <a class="table__item--detail-link" href="{{ url('/attendance/' .$attendanceRecord['id']) }}">詳細</a>
             </td>
         </tr>
         @endforeach

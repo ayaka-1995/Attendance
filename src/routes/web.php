@@ -26,7 +26,8 @@ Route::middleware('auth')->group(function(){ //ログインしている人だけ
     Route::get('/attendance', [UserController::class, 'index']); //勤怠打刻画面を表示する
     Route::post('/attendance', [UserController::class, 'attendance']);//出退勤ボタンを押した時の処理
     Route::get('/attendance/list', [UserController::class, 'list']);//勤怠一覧画面を表示
-    Route::get('/attendance/{id}', [UserController::class, 'applicationDetail']);//勤怠修正申請の詳細を表示
+    Route::get('/attendance/{id}', [UserController::class, 'detail']);//仮：勤怠詳細画面
+    Route::get('/application/{id}', [UserController::class, 'applicationDetail']);//勤怠修正申請の詳細を表示
 });
 
 // Route::middleware(['auth'])->group(function(){//管理者向け（ログイン必須）
