@@ -18,7 +18,17 @@
             <div class="form__group">
                 <p class="form__header">名前</p>
                 <div class="form__input-group">
-                    <input class="form__input form__input-name" type="text" name="name" value="{{ $user->name }}" readonly>
+                    <input class="form__input form__input--name" type="text" name="name" value="{{ $user->name }}" readonly>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <p class="form__header">日付</p>
+                <div class="form__input-group">
+                    {{-- 年部分は固定表示のみ --}}
+                    <input class="form__input" type="text" value="{{ $data['year'] }}" readonly>
+                    {{-- 修正用日付--}}
+                    <input class="form__input" type="text" name="new_date" value="{{ $data['date'] }}">
                 </div>
             </div>
 
@@ -56,6 +66,8 @@
                     </div>
                 </div>
             </div>
+
+
             <div class="error__message">
                 <div></div>
                 <div class="error-message__item">
@@ -71,6 +83,13 @@
                             <p>{{ $message}}</p>
                         @endforeach
                     @endforeach
+                </div>
+            </div>
+
+            <div class="form__group">
+                <p class="form__header">備考</p>
+                <div class="form__input-group">
+                    <input class="form__textarea" name="comment" value="{{ $data['comment'] }}">
                 </div>
             </div>
 
@@ -96,6 +115,7 @@
                     </div>
                 </div>
 
+
                 <div class="form__group">
                     <p class="form__header">日付</p>
                     <div class="form__input-group">
@@ -118,9 +138,11 @@
                     <div class="form__input-wrapper">
                         @foreach($data['breaks'] as $break)
                         <div class="form__input-group">
-                            <input class="form__input readonly" type="text" name="new_break_in[]" value="{{ $break['break_in']}}" readonly>
+                            <input class="form__input readonly" type="text" name="new_break_in[]" 
+                                value="{{ $break['break_in']}}" readonly>
                             <p>〜</p>
-                            <input class="form__input readonly" type="text" name="new_break_out[]" value="{{ $break['break_out'] }}" readonly>
+                            <input class="form__input readonly" type="text" name="new_break_out[]" 
+                                value="{{ $break['break_out'] }}" readonly>
                         </div>
                         @endforeach
                     </div>
@@ -129,7 +151,8 @@
                 <div class="form__group">
                     <p class="form__header">備考</p>
                     <div class="form__input-group">
-                        <input class="form__textarea readonly" name="comment" value="{{ $data['comment'] }}" readonly></input>
+                        <input class="form__textarea readonly" name="comment" value="{{ $data['comment'] }}" 
+                        readonly></input>
                     </div>
                 </div>
             </div>
@@ -138,6 +161,7 @@
                 <p class="readonly-message">承認待ちのため修正できません</p>
             </div>
         @endif
+
     </form>
 </div>
 @endsection

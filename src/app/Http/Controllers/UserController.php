@@ -202,6 +202,28 @@ class UserController extends Controller
         return view ('user/user-detail', compact('user', 'data'));
     }
 
+    public function applicationList()
+    {
+        $user           = Auth::user();
+        $applications   = Application::where('user_id', $user->id)->get();
+
+        // 一覧表示のために必要なデータを取得
+        $formattedApplications = $applications->map(function ($application){
+            return  [
+                'id'                   =>$application->id,
+                'application_date'     =>$application->application_date ? Carbon::parse($application_date)->format('Y/m/d') 
+                                            : null,
+                'date'                 =>$application->new_date,
+                'clock_in'             =>$application->new_clock_in,
+                'clock_out'            =>$application->new_clock_out,
+                'comment'              =>$application->comment,
+                'approval_status'      =>$application->approval_status,
+            ];
+        });
+        
+        return view('user/user-application-list', compact('user', 'formattedApplications'));
+    }
+
     public function applicationDetail($id)//まだ承認されていない提案データ
     {
         $user = Auth::user();
@@ -214,7 +236,7 @@ class UserController extends Controller
             ];
         })->toArray();
 
-        $date = [
+        $data = [
             'id'                 =>$application->id,
             //変更後日付
             'year'               =>$application->new_date ? Carbon::parse($application->new_date)->format('Y年') : null,
@@ -229,5 +251,38 @@ class UserController extends Controller
         ];
 
         return view('user/user-detail', compact('user', 'data'));
+    }
+
+    public function amendmentApplication(CorrectionRequest $request, $id)
+    {
+        $user = Auth::user();
+        $application = Application::create([
+            'user_id'              => $user->id,
+            'attendance_record_id' => $id,
+            'approval_status'      => '承認待ち',
+            'application_date'     =>now(),
+            'new_date'             =>Carbon::createFromFormat('n月j日', $request->new_date)
+                                        ->year(now()->year)
+                                        ->format('Y-m-d'),
+            'new_clock_in'         =>Carbon::parse($request->new_clock_in)->format('H:i'),
+            'new_clock_out'        =>Carbon::parse($request->new_clock_out)->format('H:i'),
+            'comment'              =>$request->comment,
+        ]);
+
+        //申請用休暇を作成
+        $rawIns  = (array) $request->input('new_break_in', []);
+        $rawOuts = (array) $request->input('new_break_out', []);
+        $pairs = [];
+        foreach(array_values(array_filter($rawIns)) as $i => $in){
+            $out = array_values(array_filter($rawOuts)) [$i] ?? null;
+            $pairs [] = [
+                'break_in' =>Carbon::parse($in)->format('H:i'),
+                'break_out' =>$out ? Carbon::parse($out)->format('H:i') : null,
+            ];
+        }
+        $application->proposalBreaks()->createMany($pairs);
+
+        //return redirect('/stamp_correction_request/list');
+        return redirect('/attendance/' . $id);
     }
 }
