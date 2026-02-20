@@ -139,8 +139,7 @@ class UserController extends Controller
             ->whereBetween('date',[$startOfMonth, $endOfMonth])
             ->get();
 
-
-        $formatted = $attendanceRecords->map(function ($rec){
+            $formatted = $attendanceRecords->map(function ($rec){
             $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
             $d = Carbon::parse($rec->date);
             return [
@@ -149,7 +148,7 @@ class UserController extends Controller
                 'clock_in'         => $rec->clock_in ? Carbon::parse($rec->clock_in)->format('H:i') : null,
                 'clock_out'        => $rec->clock_out ? Carbon::parse($rec->clock_out)->format('H:i') :null,
                 'total_time'       => $rec->total_time,
-                'total_break_time' => $rec->total_beak_time,
+                'total_break_time' => $rec->total_break_time,
             ];
         });
 
@@ -190,16 +189,52 @@ class UserController extends Controller
 
         $data = [
             'id'              => $attendanceRecord->id,
-            'year'            => $attendanceRecord->date ? Carbon::parse($attendanceRecord->date)->format('Y年') : null,
-            'date'            => $attendanceRecord->date ? Carbon::parse($attendanceRecord->date)->format('m月d日') : null,
-            'clock_in'        => $attendanceRecord->clock_in ? Carbon::parse($attendanceRecord->clock_in)->format('H:i') : null,//実際の出勤時間
-            'clock_out'       => $attendanceRecord->clock_out ? Carbon::parse($attendanceRecord->clock_out)->format('H:i') : null,//実際の退勤時間
+            'year'            => $attendanceRecord->date 
+                                    ? Carbon::parse($attendanceRecord->date)->format('Y年') : null,
+            'date'            => $attendanceRecord->date 
+                                    ? Carbon::parse($attendanceRecord->date)->format('m月d日') : null,
+            'clock_in'        => $attendanceRecord->clock_in 
+                                    ? Carbon::parse($attendanceRecord->clock_in)->format('H:i') : null,//実際の出勤時間
+            'clock_out'       => $attendanceRecord->clock_out 
+                                    ? Carbon::parse($attendanceRecord->clock_out)->format('H:i') : null,//実際の退勤時間
             'breaks'          => $masterBreaks,//実際に保存されている休憩時間
             'proposal_breaks' => $proposal,//修正申請で提出された”変更案の休憩時間”
             'comment'         => $attendanceRecord->comment,
             'application'     => $application,
         ];
         return view ('user/user-detail', compact('user', 'data'));
+    }
+
+    public function amendmentApplication(CorrectionRequest $request, $id)
+    {
+        $user = Auth::user();
+        $application = Application::create([
+            'user_id'              => $user->id,
+            'attendance_record_id' => $id,
+            'approval_status'      => '承認待ち',
+            'application_date'     =>now(),
+            'new_date'             =>Carbon::createFromFormat('m月d日', $request->new_date)
+                                        ->year(now()->year)
+                                        ->format('Y-m-d'),
+            'new_clock_in'         =>Carbon::parse($request->new_clock_in)->format('H:i'),
+            'new_clock_out'        =>Carbon::parse($request->new_clock_out)->format('H:i'),
+            'comment'              =>$request->comment,
+        ]);
+
+        //申請用休暇を作成
+        $rawIns  = (array) $request->input('new_break_in', []);
+        $rawOuts = (array) $request->input('new_break_out', []);
+        $pairs = [];
+        foreach(array_values(array_filter($rawIns)) as $i => $in){
+            $out = array_values(array_filter($rawOuts)) [$i] ?? null;
+            $pairs [] = [
+                'break_in' =>Carbon::parse($in)->format('H:i'),
+                'break_out' =>$out ? Carbon::parse($out)->format('H:i') : null,
+            ];
+        }
+        $application->proposalBreaks()->createMany($pairs);
+
+        return redirect('/stamp_correction_request/list');
     }
 
     public function applicationList()
@@ -211,7 +246,8 @@ class UserController extends Controller
         $formattedApplications = $applications->map(function ($application){
             return  [
                 'id'                   =>$application->id,
-                'application_date'     =>$application->application_date ? Carbon::parse($application_date)->format('Y/m/d') 
+                'application_date'     =>$application->application_date 
+                                            ? Carbon::parse($application->application_date)->format('Y/m/d') 
                                             : null,
                 'date'                 =>$application->new_date,
                 'clock_in'             =>$application->new_clock_in,
@@ -220,7 +256,7 @@ class UserController extends Controller
                 'approval_status'      =>$application->approval_status,
             ];
         });
-        
+
         return view('user/user-application-list', compact('user', 'formattedApplications'));
     }
 
@@ -242,9 +278,11 @@ class UserController extends Controller
             'year'               =>$application->new_date ? Carbon::parse($application->new_date)->format('Y年') : null,
             'date'               =>$application->new_date ? Carbon::parse($application->new_date)->format('m月d日') : null,
             //変更後出勤
-            'clock_in'           =>$application->new_date ? Carbon::parse($application->new_clock_in)->format('H:i') : null,
+            'clock_in'           =>$application->new_clock_in ? Carbon::parse($application->new_clock_in)->format('H:i') 
+                                    : null,
             //変更後退勤
-            'clock_out'          =>$application->new_date ? Carbon::parse($application->new_clock_out)->format('H:i') : null,
+            'clock_out'          =>$application->new_clock_out ? Carbon::parse($application->new_clock_out)->format('H:i')
+                                    : null,
             'breaks'             =>$proposalBreaks,//変更後退勤
             'comment'            =>$application->comment,
             'application'        =>$application,
@@ -253,36 +291,4 @@ class UserController extends Controller
         return view('user/user-detail', compact('user', 'data'));
     }
 
-    public function amendmentApplication(CorrectionRequest $request, $id)
-    {
-        $user = Auth::user();
-        $application = Application::create([
-            'user_id'              => $user->id,
-            'attendance_record_id' => $id,
-            'approval_status'      => '承認待ち',
-            'application_date'     =>now(),
-            'new_date'             =>Carbon::createFromFormat('n月j日', $request->new_date)
-                                        ->year(now()->year)
-                                        ->format('Y-m-d'),
-            'new_clock_in'         =>Carbon::parse($request->new_clock_in)->format('H:i'),
-            'new_clock_out'        =>Carbon::parse($request->new_clock_out)->format('H:i'),
-            'comment'              =>$request->comment,
-        ]);
-
-        //申請用休暇を作成
-        $rawIns  = (array) $request->input('new_break_in', []);
-        $rawOuts = (array) $request->input('new_break_out', []);
-        $pairs = [];
-        foreach(array_values(array_filter($rawIns)) as $i => $in){
-            $out = array_values(array_filter($rawOuts)) [$i] ?? null;
-            $pairs [] = [
-                'break_in' =>Carbon::parse($in)->format('H:i'),
-                'break_out' =>$out ? Carbon::parse($out)->format('H:i') : null,
-            ];
-        }
-        $application->proposalBreaks()->createMany($pairs);
-
-        //return redirect('/stamp_correction_request/list');
-        return redirect('/attendance/' . $id);
-    }
 }

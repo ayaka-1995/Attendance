@@ -9,11 +9,13 @@ class Application extends Model//修正の申請
 {
     protected $fillable = [
         'user_id',
-        'attendance_id',//どの勤怠に対する申請か
-        'status',//承認待ち、承認済み、却下
-        'target_date',
-        'reason',
-        'approved_date',//承認日
+        'attendance_record_id',//どの勤怠に対する申請か
+        'approval_status',//承認待ち、承認済み、却下
+        'application_date',
+        'new_date',
+        'new_clock_in',
+        'new_clock_out',
+        'comment'
     ];
 
 

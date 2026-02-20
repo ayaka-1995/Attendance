@@ -5,14 +5,14 @@
 @endsection
 
 @section('content')
-<div class="application-content">
+<div class="application-list__content">
     <div class="content__header">
         <h2 class="content__header--item">申請一覧</h2>
     </div>
     <div class="application__tab">
         <input class="application__tab--input" id="tab1" type="radio" name="tab__item" checked>
         <label class="application__tab--label" for="tab1">承認待ち</label>
-        <input class="application__tab--label" id="tab2" type="radio" name="tab_item">
+        <input class="application__tab--input" id="tab2" type="radio" name="tab_item">
         <label class="application__tab--label" for="tab2">承認済み</label>
         <div class="tab__content" id="content1">
             <table class="table">
@@ -89,6 +89,9 @@
                 <tr class="table__row">
                     <td class="table__description">
                         <p class="table__description--item">{{ $application['approve_status'] }}</p>
+                    </td>
+                    <td class="table__description">
+                        <p class="table__description--item">{{ $user->name }}</p>
                     </td>
                     <td class="table__description">
                         <p class="table__description--item">{{ $application['date']}}</p>
