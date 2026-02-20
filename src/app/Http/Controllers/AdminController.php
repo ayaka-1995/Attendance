@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Model\User;
+use App\Models\User;
 use App\Models\AttendanceRecord;
 use App\Models\Application;
 use Carbon\Carbon;
@@ -13,7 +13,7 @@ class AdminController extends Controller
 {
     public function list(Request $request)
     {
-        $user = User::all();
+        $users = User::all();
         $date = Carbon::parse($request->query('date', Carbon::now()));
         $attendanceRecords = AttendanceRecord::whereDate('date', $date)->whereIn('user_id', $users->pluck('id'))->get();
 

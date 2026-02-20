@@ -2,13 +2,13 @@
 
 use Illuminate\Support\Facades\Route; // ルーティング機能を使う
 use App\Http\Controllers\UserController; //一般ユーザー用の処理
-// use App\Http\Controllers\AdminController; //管理者用の処理
+use App\Http\Controllers\AdminController; //管理者用の処理
 use App\Http\Controllers\AuthController; //ログイン・ログアウト・登録処理
-// use App\Http\Controllers\MiddlewareController;
+use App\Http\Controllers\MiddlewareController;
 // use App\Http\Middleware\AdminStatusMiddleware; //管理者かどうかを判定するミドルウェア
 // use Laravel\Fortify\Http\Controller\VerifyEmailController; //メール認証用
-// use Illuminate\Http\Request; //HTTPリクエスト情報
-// use App\Http\Requests\CorrectionRequest; //勤怠修正申請用のバリデーション
+use Illuminate\Http\Request; //HTTPリクエスト情報
+use App\Http\Requests\CorrectionRequest; //勤怠修正申請用のバリデーション
 
 
 /*
@@ -37,13 +37,13 @@ Route::middleware('auth')->group(function(){ //ログインしている人だけ
 Route::middleware(['auth'])->group(function(){//管理者向け（ログイン必須）
     //管理画面系
     Route::get('/admin/attendance/list', [AdminController::class, 'list']);//全スタッフの勤怠一覧
-    Route::get('/admin/staff/list', [AdminController::class, 'staffList']);//スタッフ一覧
+    // Route::get('/admin/staff/list', [AdminController::class, 'staffList']);//スタッフ一覧
     Route::get('/admin/attendance/staff/{id}', [AdminController::class, 'staffDetailList']);//特定スタッフの勤怠詳細
     Route::post('/admin/logout', [AdminController::class, 'adminLogout']);//管理者ログアウト
-    //勤怠修正申請の承認
-    Route::get('/stamp_correction_request/approve/{id}',[AdminController::class, 'approvalShow']);//修正申請の承認画面表示
-    Route::post('/stamp_correction_request/approve/{id}', [AdminController::class, 'approval']);//修正申請を承認する処理
-    Route::post('/export', [AdminController::class, 'export']);//勤怠データをCSVなどでエクスポート
+    // //勤怠修正申請の承認
+    // Route::get('/stamp_correction_request/approve/{id}',[AdminController::class, 'approvalShow']);//修正申請の承認画面表示
+    // Route::post('/stamp_correction_request/approve/{id}', [AdminController::class, 'approval']);//修正申請を承認する処理
+    // Route::post('/export', [AdminController::class, 'export']);//勤怠データをCSVなどでエクスポート
 });
 
 
