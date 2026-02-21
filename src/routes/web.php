@@ -5,7 +5,7 @@ use App\Http\Controllers\UserController; //一般ユーザー用の処理
 use App\Http\Controllers\AdminController; //管理者用の処理
 use App\Http\Controllers\AuthController; //ログイン・ログアウト・登録処理
 use App\Http\Controllers\MiddlewareController;
-// use App\Http\Middleware\AdminStatusMiddleware; //管理者かどうかを判定するミドルウェア
+use App\Http\Middleware\AdminStatusMiddleware; //管理者かどうかを判定するミドルウェア
 // use Laravel\Fortify\Http\Controller\VerifyEmailController; //メール認証用
 use Illuminate\Http\Request; //HTTPリクエスト情報
 use App\Http\Requests\CorrectionRequest; //勤怠修正申請用のバリデーション
@@ -48,35 +48,35 @@ Route::middleware(['auth'])->group(function(){//管理者向け（ログイン�
 
 
 //管理者か一般ユーザーかで処理を切り替えるルート
-// Route::middleware(['auth', AdminStatusMiddleware::class])->group(function(){//ログイン必須、管理者フラグをチェック
-//     Route::get('/stamp_correction_request/list', function(Request $request){//直前の画面が/adminから来ていて
-//         if($request->headers->has('referer') && str_contains($request->headers->get('referer'), '/admin')){
-//             if(auth()->user()->admin_status){//かつ管理者なら→adminController
-//                 return app(AdminController::class)->applicationList($request);
-//             }
-//         }else {//それ以外→UserController
-//             return app(UserController::class)->applicationList($request);
-//         }
-//     });
-//     Route::get('/attendance/{id}',function($id, Request $request){//勤怠詳細画面（共通URL)
-//         if($request->headers->has('referer') && str_contains($request->headers->get('referer'), 'admin')){
-//             if(auth()->user()->admin_status){//管理画面から来た管理者→管理者用詳細
-//                 return app(AdminController::class)->detail($id);
-//             }
-//         } else{//一般ユーザー→自分の勤怠詳細
-//             return app(UserController::class)->detail($id);
-//         }
-//     });
-//     Route::post('/attendance/{id}', function (CorrectionRequest $request, $id){//勤怠修正申請の送信
-//         if(auth()->user()->admin_status){//管理者→管理者用修正処理
-//             if(auth()->user()->admin_status){
-//                 return app(AdminController::class)->amendmentApplication($request, $id);
-//             }
-//         } else {//一般ユーザー→ユーザー用修正申請処理
-//             return app(UserController::class)->amendmentApplication($request, $id);
-//         }
-//     });
-// });
+Route::middleware(['auth', AdminStatusMiddleware::class])->group(function(){//ログイン必須、管理者フラグをチェック
+    Route::get('/stamp_correction_request/list', function(Request $request){//直前の画面が/adminから来ていて
+        if($request->headers->has('referer') && str_contains($request->headers->get('referer'), '/admin')){
+            if(auth()->user()->admin_status){//かつ管理者なら→adminController
+                return app(AdminController::class)->applicationList($request);
+            }
+        }else {//それ以外→UserController
+            return app(UserController::class)->applicationList($request);
+        }
+    });
+    Route::get('/attendance/{id}',function($id, Request $request){//勤怠詳細画面（共通URL)
+        if($request->headers->has('referer') && str_contains($request->headers->get('referer'), 'admin')){
+            if(auth()->user()->admin_status){//管理画面から来た管理者→管理者用詳細
+                return app(AdminController::class)->detail($id);
+            }
+        } else{//一般ユーザー→自分の勤怠詳細
+            return app(UserController::class)->detail($id);
+        }
+    });
+    Route::post('/attendance/{id}', function (CorrectionRequest $request, $id){//勤怠修正申請の送信
+        if(auth()->user()->admin_status){//管理者→管理者用修正処理
+            if(auth()->user()->admin_status){
+                return app(AdminController::class)->amendmentApplication($request, $id);
+            }
+        } else {//一般ユーザー→ユーザー用修正申請処理
+            return app(UserController::class)->amendmentApplication($request, $id);
+        }
+    });
+});
 
 Route::get('/admin/login', [AuthController::class, 'adminLogin']);//管理者ログイン画面
 Route::post('/admin/login', [AuthController::class, 'adminDoLogin']);//管理者ログイン処理
