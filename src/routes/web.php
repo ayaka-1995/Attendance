@@ -28,7 +28,7 @@ Route::middleware('auth')->group(function(){ //ログインしている人だけ
     Route::get('/attendance/list', [UserController::class, 'list']);//勤怠一覧画面を表示
     Route::get('/attendance/{id}', [UserController::class, 'detail']);//仮：勤怠詳細画面表示
     Route::post('/attendance/{id}', [UserController::class,'detail']);//仮：勤怠詳細画面処理
-    Route::post('/attendance/{id}', [UserCOntroller::class, 'amendmentApplication']);//仮：勤怠修正
+    Route::post('/attendance/{id}', [UserController::class, 'amendmentApplication']);//仮：勤怠修正
     Route::get('/application/{id}', [UserController::class, 'applicationDetail']);//勤怠修正申請の詳細を表示
     Route::get('/stamp_correction_request/list', [UserController::class, 'applicationList']);//仮：申請一覧画面表示
     
@@ -37,13 +37,13 @@ Route::middleware('auth')->group(function(){ //ログインしている人だけ
 Route::middleware(['auth'])->group(function(){//管理者向け（ログイン必須）
     //管理画面系
     Route::get('/admin/attendance/list', [AdminController::class, 'list']);//全スタッフの勤怠一覧
-    // Route::get('/admin/staff/list', [AdminController::class, 'staffList']);//スタッフ一覧
+    Route::get('/admin/staff/list', [AdminController::class, 'staffList']);//スタッフ一覧
     Route::get('/admin/attendance/staff/{id}', [AdminController::class, 'staffDetailList']);//特定スタッフの勤怠詳細
     Route::post('/admin/logout', [AdminController::class, 'adminLogout']);//管理者ログアウト
     // //勤怠修正申請の承認
-    // Route::get('/stamp_correction_request/approve/{id}',[AdminController::class, 'approvalShow']);//修正申請の承認画面表示
-    // Route::post('/stamp_correction_request/approve/{id}', [AdminController::class, 'approval']);//修正申請を承認する処理
-    // Route::post('/export', [AdminController::class, 'export']);//勤怠データをCSVなどでエクスポート
+    Route::get('/stamp_correction_request/approve/{id}',[AdminController::class, 'approvalShow']);//修正申請の承認画面表示
+    Route::post('/stamp_correction_request/approve/{id}', [AdminController::class, 'approval']);//修正申請を承認する処理
+    Route::post('/export', [AdminController::class, 'export']);//勤怠データをCSVなどでエクスポート
 });
 
 

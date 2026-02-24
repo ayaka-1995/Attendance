@@ -46,10 +46,10 @@ class AdminController extends Controller
         $formattedAttendanceRecords = $attendanceRecords->map(function ($attendance){
             $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
             $date = Carbon::parse($attendance->date);
-            $weekly = $weekdays[$date->dayOfWeek];
+            $weekday = $weekdays[$date->dayOfWeek];
             return [
                 'id' => $attendance->id,
-                'date' => $date->format('m/d') ."($weekday)",
+                'date' => $date->format('m/d') . "($weekday)",
                 'clock_in' => $attendance->clock_in ? Carbon::parse($attendance->clock_in)->format('H:i') : null,
                 'clock_out' => $attendance->clock_out ? Carbon::parse($attendance->clock_out)->format('H:i') : null,
                 'total_time' => $attendance->total_time,
@@ -154,4 +154,10 @@ class AdminController extends Controller
         }
 
         
+        public function applicationList()
+        {
+            $user = User::all();
+            $applications = Application::all();
+            return view('admin/admin-application-list', compact('user','applications'));
+        }
 }
