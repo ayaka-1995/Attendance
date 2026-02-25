@@ -160,4 +160,14 @@ class AdminController extends Controller
             $applications = Application::all();
             return view('admin/admin-application-list', compact('user','applications'));
         }
+
+        public function approvalShow($id) 
+        {
+            $application = Application::findOrFail($id);
+            $user = User::findOrFail($application->user_id);
+
+            $application->new_date = Carbon::parse($application->new_date);
+            $application->new_clock_in = $application->new_clock_in ? Carbon::parse($application->new_clock_in)->format('H:i') : null;
+            
+        }
 }
