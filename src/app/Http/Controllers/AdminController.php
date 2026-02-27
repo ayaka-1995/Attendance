@@ -151,10 +151,10 @@ class AdminController extends Controller
         $attendance->save();
 
         return app(AdminController::class)->detail($id);
-        }
-
+    }
         
-        public function applicationList()
+    
+    public function applicationList()
         {
             $user = User::all();
             $applications = Application::all();
@@ -168,6 +168,109 @@ class AdminController extends Controller
 
             $application->new_date = Carbon::parse($application->new_date);
             $application->new_clock_in = $application->new_clock_in ? Carbon::parse($application->new_clock_in)->format('H:i') : null;
-            
+            $application->new_clock_out = $application->new_clock_out ? Carbon::parse($application->new_clock_out)->format('H:i') :null;
+            $application->new_beak_in = $application->new_break_in ? Carbon::parse($application->new_break_in)->format('H:i') : null;
+            $application->new_break_out = $application->new_break_out ? Carbon::parse($application->new_break_out)->format('H:i') :null;
+
+            return view('/admin/admin-application-detail', compact('user', 'application'));
+        }
+
+        public function approval(Request $request, $id)
+        {
+            $application = Application::findOrFail($id);
+            $user = User::findOrFail($application->user_id);
+            $attendanceRecord = AttendanceRecord::findOrFail($application->attendance_record_id);
+
+            $application->approval_status = "承認済み";
+            $application->save();
+
+            $attendanceRecord->date = $application->new_date;
+            $attendanceRecord->clock_in = $application->new_clock_in;
+            $attendanceRecord->clock_out = $application->new_clock_out;
+            $attendanceRecord->comment = $application->comment;
+
+            //既存のbreakを削除
+            $attendanceRecord->breaks()->delete();
+
+            //application_breaks -> breaksへコピー
+            foreach ($application->proposalBreaks as $applicationBreak) {
+                $attendanceRecord->breaks()->create([
+                    'break_in' => $applicationBreak->break_in,
+                    'break_out' => $applicationBreak->break_out,
+                ]);
+            }
+
+            $clockIn = Carbon::parse($attendanceRecord->clock_in);
+            $clockOut = Carbon::parse($attendanceRecord->clock_out);
+
+            $totalBreakTime = 0;
+            foreach($attendanceRecord->breaks as $break) {
+                if($break->break_in && $break->break_out){
+                    $breakIn = Carbon::parse($break->break_in);
+                    $breakOut = Carbon::parse($break->break_out);
+                    $totalBreakTime += $breakIn->diffInMinutes($breakOut);
+                }
+            }
+
+            $totalBreakHours = floor($totalBreakTime / 60);
+            $totalBreakMinutes = $totalBreakTime % 60;
+            $attendanceRecord->total_break_time = sprintf('%02d:%02d', $totalBreakHours, $totalBreakMinutes);
+
+            $totalWorkedMinutes = $clockIn->diffInMinutes($clockOut) - $totalBreakTime;
+            $hours = floor($totalWorkedMinutes / 60);
+            $minutes = $totalWorkedMinutes % 60;
+            $attendanceRecord->total_time = sprintf('%02d:%02d', $hours, $minutes);
+
+            $attendanceRecord->save();
+
+            return redirect('/admin/application/' . $id);
+        }
+
+        public function export(Request $request)
+        {
+            $userId = $request->input('user_id');
+            $yearMonth = $request->input('year_month');
+            $startDate = Carbon::createFormFormat('Y-m', $yearMonth)->startOfMonth();
+            $endDate = Carbon::createFormFormat('Y-m', $yearMonth)->endOfMonth();
+
+            $staffAttendance = AttendanceRecord::where('user_id', $userId)->whereBetween('date',[$startDate, $endDate])->get();
+
+            $user = User::find($userId);
+            $userName = $user->name;
+
+            $csvHeader = [
+                '日付',
+                '出勤時間',
+                '退勤時間',
+                '休憩時間',
+                '勤務時間'
+            ];
+            $temps = [];
+            array_push($temps, $csvHeader);
+
+            foreach ($staffAttendance as $staff) {
+                $temps = [
+                    Carbon::parse($staff->date)->format('Y/m/d'),
+                    Carbon::parse($staff->clock_in)->format('H:i'),
+                    Carbon::parse($staff->clock_out)->format('H:i'),
+                    $staff->total_break_time,
+                    $staff->total_time
+                ];
+
+                array_push($temps, $temp);
+            }
+            $stream = fopen('php://temp', 'r+b');
+            foreach ($temps as $temp) {
+                fputcsv($stream, $temp);
+            }
+            rewind($stream);
+            $csv = str_replace(PHP_EOL, "\r\n", stream_get_contents($stream));
+            $csv = mb_convert_encoding($csv, 'SJIS-win', 'UTF-8');
+            $filename = "{$userName}さんの勤怠リスト.csv";
+            $headers = array(
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename' . $filename,
+            );
+            return response($csv, 200, $headers);
         }
 }
