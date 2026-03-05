@@ -6,7 +6,7 @@ use App\Http\Controllers\AdminController; //管理者用の処理
 use App\Http\Controllers\AuthController; //ログイン・ログアウト・登録処理
 use App\Http\Controllers\MiddlewareController;
 use App\Http\Middleware\AdminStatusMiddleware; //管理者かどうかを判定するミドルウェア
-// use Laravel\Fortify\Http\Controller\VerifyEmailController; //メール認証用
+use Laravel\Fortify\Http\Controllers\VerifyEmailController; //メール認証用
 use Illuminate\Http\Request; //HTTPリクエスト情報
 use App\Http\Requests\CorrectionRequest; //勤怠修正申請用のバリデーション
 
@@ -86,11 +86,12 @@ Route::post('/login', [AuthController::class, 'doLogin']);//一般ユーザー�
 Route::post('/logout', [AuthController::class, 'doLogout']);//ログアウト
 Route::get('/register',[AuthController::class,'register']);
 Route::post('/register', [AuthController::class, 'store']);//会員登録
-// Route::get('/email/verify', function(){//メール認証を促す画面表示
-//     return view('auth.verify-email');
-// })->middleware(['auth'])->name('verification.notice');
-// Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])//メール内リンクを踏んだ時の認証処理
-//     ->middleware(['signed'])
-//     ->name('verification.verify');
+
+Route::get('/email/verify', function(){//メール認証を促す画面表示
+    return view('auth.verify-email');
+})->middleware(['auth'])->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])//メール内リンクを踏んだ時の認証処理
+    ->middleware(['signed'])
+    ->name('verification.verify');
 
 

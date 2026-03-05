@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Application extends Model//修正の申請
 {
+
+    use HasFactory;
+    
     protected $fillable = [
         'user_id',
         'attendance_record_id',//どの勤怠に対する申請か

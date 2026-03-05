@@ -109,8 +109,8 @@ class AdminController extends Controller
         if (is_array($dateString)) {
             $dateString = $dateString[1];
         }
-        $parseDate = Carbon::createFormFormat('n月j日', $dateString)->year(now()->year)->format('Y-m-d');
-        $attendance->date = $parseDate;
+        $parsedDate = Carbon::createFromFormat('n月j日', $dateString)->year(now()->year)->format('Y-m-d');
+        $attendance->date = $parsedDate;
 
         // ---出退勤時間の更新 ---
         $attendance->clock_in = Carbon::parse($request->new_clock_in)->format('H:i');
@@ -121,9 +121,9 @@ class AdminController extends Controller
         $attendance->save();
 
         // --- 休憩時間の更新---
-        $attendance->breaks()->detail(); //既存休憩を削除
+        $attendance->breaks()->delete(); //既存休憩を削除
         
-        $beakIns = $request->input('new_break_in', []);
+        $breakIns = $request->input('new_break_in', []);
         $breakOuts = $request->input('new_break_out', []);
         $totalBreakMinutes = 0;
 
@@ -144,13 +144,14 @@ class AdminController extends Controller
         // --- 勤務時間・休憩時間の計算---
         $clockIn = Carbon::parse($attendance->clock_in);
         $clockOut = Carbon::parse($attendance->clock_out);
-        $totalWorkMinutes = $clockIn->diffInMinutes($clockOut) - $totalBreakMinutes;
+        $totalWorkedMinutes = $clockIn->diffInMinutes($clockOut) - $totalBreakMinutes;
 
         $attendance->total_break_time = sprintf('%02d:%02d', intdiv($totalBreakMinutes, 60), $totalBreakMinutes % 60);
-        $attendance->total_time = sprintf('%02d:%02d', intdiv($totalWorkedMinutes, 60), $totalWOrkedMinutes % 60);
+        $attendance->total_time = sprintf('%02d:%02d', intdiv($totalWorkedMinutes, 60), $totalWorkedMinutes % 60);
         $attendance->save();
 
-        return app(AdminController::class)->detail($id);
+        //return app(AdminController::class)->detail($id);
+        return redirect('/stamp_correction_request/list');
     }
         
     
@@ -230,8 +231,8 @@ class AdminController extends Controller
         {
             $userId = $request->input('user_id');
             $yearMonth = $request->input('year_month');
-            $startDate = Carbon::createFormFormat('Y-m', $yearMonth)->startOfMonth();
-            $endDate = Carbon::createFormFormat('Y-m', $yearMonth)->endOfMonth();
+            $startDate = Carbon::createFromFormat('Y-m', $yearMonth)->startOfMonth();
+            $endDate = Carbon::createFromFormat('Y-m', $yearMonth)->endOfMonth();
 
             $staffAttendance = AttendanceRecord::where('user_id', $userId)->whereBetween('date',[$startDate, $endDate])->get();
 
