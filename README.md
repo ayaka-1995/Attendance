@@ -1,8 +1,43 @@
 # Attendance
 
-## 環境構築
+## 概要
+ユーザーの出勤・勤怠・休憩時間を記録し、勤怠情報を管理するWebアプリケーションです。
 
-本プロジェクトはLaravel Sail(Docker)で構築します。ローカルにPHP/Composerがなくても構築できる
+## 使用技術
+
+### Backend
+・PHP7.4.9
+・Laravel 8
+・MySQL8.0.26
+
+### Frontend
+・HTML
+・CSS
+・Blade
+
+### Environment
+・Docker
+・Docker Compose
+・Nginx
+
+## 機能一覧
+
+### 一般ユーザー
+・会員登録
+・ログイン・ログアウト
+・出勤・退勤の記録
+・休憩開始・終了の記録
+・当日の勤怠情報の確認
+・勤怠一覧の確認
+・勤怠詳細の確認
+
+### 管理者
+・管理者のログイン
+・ユーザーの勤怠一覧情報確認
+・勤怠情報の管理
+※実際に実装している機能に合わせて調整してください。
+
+## 環境構築
 
 ### 1.リポジトリのクローン
 ```
@@ -10,48 +45,51 @@ git clone git@github.com:ayaka-1995/Attendance.git
 cd Attendance
 ```
 
-### 2. 環境変数ファイルの作成
+### 2. Dockerコンテナを起動
+```
+docker-compose up -d
+```
+
+### 3.PHPコンテナに入る
+```
+docker-compose exec php bash
+```
+
+### 4.Composer install
+```
+composer install
+```
+
+### 5.envファイルを作成
 ```
 cp .env.example .env
 ```
+環境に合わせてDB接続情報を設定してください
 
-### 3.Composer依存のインストール（Docker経由）
+### 6.アプリケーションキーを生成
 ```
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd):/var/www/html" \
-    -w /var/www/html\
-    laravelsail/php82-composer:latest \
-    composer install
+php artisan key:generate
 ```
 
-### 4.Sailの起動
+### 7.マイグレーション
 ```
-./vendor/bin/sail up -d
-```
-
-### 5.アプリケーションキーの生成
-```
-sail artisan key:generate
+php artisan migrate
 ```
 
-### 6.マイグレーション&シーディング
+### 8.必要に応じて初期データを登録
 ```
-sail artisan migrate --seed
-```
-
-### 7.フロントエンドアセットのビルド
-```
-sail npm install
-sail npm run build #開発中にホットリロードする場合は sail npm run dev
+php artisan db:seed
 ```
 
-### 8.アクセス
-・アプリ：http://localhost
+
+## アプリケーションURL
+```
+http://localhost/
+```
 
 ## テスト実行
 ```
-sail artisan test
+php artisan test
 ```
 
 
@@ -153,4 +191,9 @@ sail artisan test
 
 ・開発環境:http://localhost/
 ・phpMyAdmin:http://localhost:8080/
-・Mailpit:http://localhost:
+
+## 工夫した点
+- Docker Composeを使用して開発環境を構築
+- 出勤・退勤・休憩の状態を管理し、ユーザーが現在の勤怠状況を確認できるようにした
+- 勤怠情報を日付ごとに確認できるようにした
+- バリデーションを実装し、不正な入力を防止した
