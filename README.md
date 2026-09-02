@@ -166,19 +166,6 @@ php artisan test
 ## ER 図
 ![alt](ER.png)
 
-
-## API エンドポイント一覧（応用）
-
-公開 API v1。読み取り系（GET）は認証不要、書き込み系（POST / PUT / DELETE）は Sanctum 認証必須で、PUT / DELETE は本人または管理者のみ操作可能。
-
-| HTTPメソッド | URI | 説明 | 認証・認可 |
-| ------------ | --------------------------------------------- | ------------------ | ----------------------------------------- |
-| GET | /api/v1/attendance-records | 勤怠一覧を取得する | 不要 |
-| GET | /api/v1/attendance-records/{attendanceRecord} | 勤怠詳細を取得する | 不要 |
-| POST | /api/v1/attendance-records | 勤怠を新規登録する | Sanctum 必須 |
-| PUT / PATCH | /api/v1/attendance-records/{attendanceRecord} | 勤怠を更新する | Sanctum + Policy（本人または管理者のみ） |
-| DELETE | /api/v1/attendance-records/{attendanceRecord} | 勤怠を削除する | Sanctum + Policy（本人または管理者のみ） |
-
 ### ログイン情報
 一般ユーザー
     id: user1@example.com/user2@example.com
