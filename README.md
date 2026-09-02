@@ -208,7 +208,7 @@ sail artisan test
 | updated_at     | timestamp |             |            |          |                  |
 
 ## ER 図
-
+![alt](ER.png)
 
 
 ## API エンドポイント一覧（応用）
