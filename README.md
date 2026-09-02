@@ -4,18 +4,18 @@
 
 本プロジェクトはLaravel Sail(Docker)で構築します。ローカルにPHP/Composerがなくても構築できる
 
-# 1.リポジトリのクローン
+### 1.リポジトリのクローン
 ```
 git clone git@github.com:ayaka-1995/Attendance.git
 cd Attendance
 ```
 
-# 2. 環境変数ファイルの作成
+### 2. 環境変数ファイルの作成
 ```
 cp .env.example .env
 ```
 
-# 3.Composer依存のインストール（Docker経由）
+### 3.Composer依存のインストール（Docker経由）
 ```
 docker run --rm \
     -u "$(id -u):$(id -g)" \
@@ -25,31 +25,31 @@ docker run --rm \
     composer install
 ```
 
-# 4.Sailの起動
+### 4.Sailの起動
 ```
 ./vendor/bin/sail up -d
 ```
 
-# 5.アプリケーションキーの生成
+### 5.アプリケーションキーの生成
 ```
 sail artisan key:generate
 ```
 
-# 6.マイグレーション&シーディング
+### 6.マイグレーション&シーディング
 ```
 sail artisan migrate --seed
 ```
 
-# 7.フロントエンドアセットのビルド
+### 7.フロントエンドアセットのビルド
 ```
 sail npm install
 sail npm run build #開発中にホットリロードする場合は sail npm run dev
 ```
 
-# 8.アクセス
+### 8.アクセス
 ・アプリ：http://localhost
 
-### テスト実行
+## テスト実行
 ```
 sail artisan test
 ```
