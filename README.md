@@ -1,5 +1,4 @@
 # Attendance
-# PiGLy
 
 ## 環境構築
 
@@ -55,87 +54,6 @@ sail npm run build #開発中にホットリロードする場合は sail npm ru
 sail artisan test
 ```
 
-### テーブル仕様
-# coachtech-mockcase-2（勤怠管理アプリ / 模範解答）
-
-勤怠打刻・勤怠一覧・修正申請と承認・管理者機能・メール認証・公開API（Sanctum）を備えた勤怠管理アプリケーションです。
-
-## 使用技術
-
-- PHP 8.2
-- Laravel 10.x
-- MySQL 8.4
-- Laravel Sail（Docker）
-- Vite（アセットビルド）
-- Mailpit（メール受信確認）
-
-## 環境構築
-
-本プロジェクトは **Laravel Sail**（Docker）で構築します。ローカルに PHP / Composer が無くても構築できます。
-
-### 1. リポジトリのクローン
-
-```bash
-git clone git@github.com:Estra-Coachtech/coachtech-mockcase-2.git
-cd coachtech-mockcase-2
-```
-
-### 2. 環境変数ファイルの作成
-
-```bash
-cp .env.example .env
-```
-
-### 3. Composer 依存のインストール（Docker 経由）
-
-```bash
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd):/var/www/html" \
-    -w /var/www/html \
-    laravelsail/php82-composer:latest \
-    composer install
-```
-
-### 4. Sail の起動
-
-```bash
-./vendor/bin/sail up -d
-```
-
-> 毎回 `./vendor/bin/sail` と打つ代わりに、エイリアスの設定を推奨します。
-> ```bash
-> alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
-> ```
-
-### 5. アプリケーションキーの生成
-
-```bash
-sail artisan key:generate
-```
-
-### 6. マイグレーション & シーディング
-
-```bash
-sail artisan migrate --seed
-```
-
-### 7. フロントエンドアセットのビルド
-
-```bash
-sail npm install
-sail npm run build   # 開発中にホットリロードする場合は sail npm run dev
-```
-
-### 8. アクセス
-
-- アプリ：http://localhost
-
-## テスト実行
-
-```bash
-sail artisan test
-```
 
 ## テーブル仕様
 
